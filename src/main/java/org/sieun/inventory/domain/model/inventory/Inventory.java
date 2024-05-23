@@ -1,16 +1,31 @@
 package org.sieun.inventory.domain.model.inventory;
 
 public class Inventory {
+    private final InventoryId inventoryId;
+    private Integer originalQuantity;
+    private Integer leftQuantity;
+    private final Integer purchasePrice;
+    private boolean isDisposed;
 
-    private InventoryId inventoryId;
-    private Integer count;
-    private Integer purchasePrice;
 
-    public Integer use() {
-        return null;
+
+    public Inventory(Long storeId, int quantity, int purchasePrice) {
+        this.inventoryId = new InventoryId(storeId);
+        this.originalQuantity = quantity;
+        this.purchasePrice = purchasePrice;
+        this.isDisposed = false;
+        this.leftQuantity = quantity;
     }
 
-    public Integer dispose() {
-        return null;
+    public InventoryId getId() {
+        return this.inventoryId;
+    }
+
+    public void use(int quantity) {
+        leftQuantity -= quantity;
+    }
+
+    public void dispose() {
+        this.isDisposed = true;
     }
 }
