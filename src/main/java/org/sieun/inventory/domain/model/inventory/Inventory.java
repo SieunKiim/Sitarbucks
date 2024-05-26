@@ -21,8 +21,16 @@ public class Inventory {
         return this.inventoryId;
     }
 
+    public int getLeftQuantity() {
+        return this.leftQuantity;
+    }
+
+    public boolean isDisposed() {
+        return this.isDisposed;
+    }
+
     public void use(int quantity) {
-        leftQuantity -= quantity;
+        this.leftQuantity -= quantity;
     }
 
     public void dispose() {
