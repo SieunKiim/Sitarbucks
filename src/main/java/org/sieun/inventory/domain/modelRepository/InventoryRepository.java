@@ -7,7 +7,7 @@ import org.sieun.inventory.domain.model.inventory.InventoryId;
 
 public interface InventoryRepository {
 
-    Inventory get(InventoryId inventoryId);
+    List<Inventory> getInventories(InventoryId inventoryId);
 
     Inventory save(Inventory inventory);
 

@@ -1,8 +1,8 @@
 package org.sieun.inventory.serivce;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.time.LocalDate;
 import java.util.List;
+import org.sieun.inventory.domain.model.Inventories;
 import org.sieun.inventory.domain.model.inventory.Inventory;
 import org.sieun.inventory.domain.model.inventory.InventoryId;
 import org.sieun.inventory.domain.modelRepository.InventoryRepository;
@@ -15,13 +15,13 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
-    public Inventory getInventory(InventoryId inventoryId) {
-        return inventoryRepository.get(inventoryId);
+    public List<Inventory> getInventory(InventoryId inventoryId) {
+        return inventoryRepository.getInventories(inventoryId);
     }
 
-    public void useInventory(InventoryId inventoryId, int quantity) {
-        Inventory inventory = inventoryRepository.get(inventoryId);
-        inventory.use(quantity);
+    public boolean useInventory(InventoryId inventoryId, int quantity) {
+        Inventories inventories = new Inventories(inventoryRepository.getInventories(inventoryId));
+        return inventories.use(quantity);
     }
 
     public Inventory fillInventory(Long storeId, int quantity, int purchasePrice) {

@@ -14,8 +14,14 @@ public class MemoryInventoryRepository implements InventoryRepository {
     private final HashMap<InventoryId, Inventory> repository = new HashMap<>();
 
     @Override
-    public Inventory get(InventoryId inventoryId) {
-        return repository.get(inventoryId);
+    public List<Inventory> getInventories(InventoryId inventoryId) {
+        List<Inventory> output = new ArrayList<>();
+        for (Entry<InventoryId, Inventory> entry : repository.entrySet()) {
+            if (entry.getKey().isSameStock(inventoryId)) {
+                output.add(entry.getValue());
+            }
+        }
+        return output;
     }
 
     @Override
@@ -29,7 +35,7 @@ public class MemoryInventoryRepository implements InventoryRepository {
         List<Inventory> output = new ArrayList<>();
         for (Entry<InventoryId, Inventory> entry : repository.entrySet()) {
             LocalDate expireDate = entry.getKey().getStoredDate() ; // + 사용 가능 기간
-            if (expireDate.isAfter(LocalDate.now())) {
+            if (expireDate.isBefore(LocalDate.now())) {
                 output.add(entry.getValue());
             }
         }

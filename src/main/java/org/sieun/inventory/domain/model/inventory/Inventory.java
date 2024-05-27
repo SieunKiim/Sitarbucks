@@ -1,5 +1,7 @@
 package org.sieun.inventory.domain.model.inventory;
 
+import java.time.LocalDate;
+
 public class Inventory {
     private final InventoryId inventoryId;
     private Integer originalQuantity;
@@ -11,6 +13,14 @@ public class Inventory {
 
     public Inventory(Long storeId, int quantity, int purchasePrice) {
         this.inventoryId = new InventoryId(storeId);
+        this.originalQuantity = quantity;
+        this.purchasePrice = purchasePrice;
+        this.isDisposed = false;
+        this.leftQuantity = quantity;
+    }
+
+    public Inventory(Long storeId, LocalDate localDate, int quantity, int purchasePrice) {
+        this.inventoryId = new InventoryId(storeId, localDate);
         this.originalQuantity = quantity;
         this.purchasePrice = purchasePrice;
         this.isDisposed = false;
