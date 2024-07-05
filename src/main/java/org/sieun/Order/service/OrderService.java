@@ -1,11 +1,8 @@
 package org.sieun.Order.service;
 
-import java.util.HashMap;
 import java.util.List;
-import org.sieun.Order.domain.model.Ingredient;
 import org.sieun.Order.domain.model.order.Order;
 import org.sieun.Order.domain.model.order.OrderLine;
-import org.sieun.Order.domain.model.order.OrderLines;
 import org.sieun.Order.domain.modelRepository.OrderRepository;
 
 public class OrderService {
@@ -20,10 +17,8 @@ public class OrderService {
 
     // 주문 생성
     public Order newOrder(List<OrderLine> orderLineList) {
-        OrderLines orderLines = new OrderLines(orderLineList);
-        HashMap<Ingredient, Integer> map = orderLines.getAllIngredients();
-        ingredientService.checkPossible(map);
         Order order = new Order(orderLineList);
+        ingredientService.useIngredient(order.getAllIngredients());
         return orderRepository.save(order);
     }
 
@@ -33,13 +28,15 @@ public class OrderService {
     }
 
     // 주문 변경
-    public Order changeOrder(long orderId, List<OrderLine> orderLineList){
-        Order order = orderRepository.findById(orderId);
-        if (!order.isChangeable()) {
-            throw new RuntimeException("주문을 변경할 수 없음");
+    public Order changeOrder(long orderId, List<OrderLine> changedOrderLineLest){
+        Order originalOrder = orderRepository.findById(orderId);
+        Order changedOrder = new Order(changedOrderLineLest);
+        if (!originalOrder.isChangeable()) {
+            throw new RuntimeException("주문 변경이 불가능합니다");
         }
-        order.changeOrder(orderLineList);
-        return orderRepository.update(orderId, order);
+        ingredientService.useIngredient(originalOrder.getDifferentIngredients(changedOrder));
+        originalOrder.changeOrder(changedOrderLineLest);
+        return orderRepository.update(originalOrder);
     }
 
     // 주문 취소
@@ -48,7 +45,8 @@ public class OrderService {
         if (!order.isCancelable()) {
             throw new RuntimeException("주문을 취소할 수 없음");
         }
+        ingredientService.restockIngredient(order.getAllIngredients());
         order.cancelOrder();
-        orderRepository.update(orderId, order);
+        orderRepository.update(order);
     }
 }

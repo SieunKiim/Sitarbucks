@@ -9,5 +9,5 @@ public interface OrderRepository {
 
     Order save(Order order);
 
-    Order update(long orderId, Order order);
+    Order update(Order order);
 }
