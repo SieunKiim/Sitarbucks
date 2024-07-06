@@ -4,21 +4,25 @@ import java.util.List;
 import org.sieun.Order.domain.model.order.Order;
 import org.sieun.Order.domain.model.order.OrderLine;
 import org.sieun.Order.domain.modelRepository.OrderRepository;
+import org.sieun.Order.infra.adaptor.IngredientRepositoryAdaptor;
+import org.sieun.Order.service.port.IngredientPort;
 
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final IngredientService ingredientService;
+    private final IngredientPort ingredientPort;
 
-    public OrderService(IngredientService ingredientService, OrderRepository orderRepository) {
+    public OrderService(IngredientRepositoryAdaptor ingredientPort, OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-        this.ingredientService = ingredientService;
+        this.ingredientPort = ingredientPort;
     }
 
     // 주문 생성
     public Order newOrder(List<OrderLine> orderLineList) {
         Order order = new Order(orderLineList);
-        ingredientService.useIngredient(order.getAllIngredients());
+        ingredientPort.useIngredient(order.getAllIngredients());
+        // 결제 요청
+        // 제조 요청
         return orderRepository.save(order);
     }
 
@@ -34,7 +38,7 @@ public class OrderService {
         if (!originalOrder.isChangeable()) {
             throw new RuntimeException("주문 변경이 불가능합니다");
         }
-        ingredientService.useIngredient(originalOrder.getDifferentIngredients(changedOrder));
+        ingredientPort.useIngredient(originalOrder.getDifferentIngredients(changedOrder));
         originalOrder.changeOrder(changedOrderLineLest);
         return orderRepository.update(originalOrder);
     }
@@ -45,7 +49,7 @@ public class OrderService {
         if (!order.isCancelable()) {
             throw new RuntimeException("주문을 취소할 수 없음");
         }
-        ingredientService.restockIngredient(order.getAllIngredients());
+        ingredientPort.restockIngredient(order.getAllIngredients());
         order.cancelOrder();
         orderRepository.update(order);
     }

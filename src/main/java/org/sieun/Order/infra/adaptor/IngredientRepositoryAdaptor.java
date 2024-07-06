@@ -1,21 +1,24 @@
-package org.sieun.Order.service;
+package org.sieun.Order.infra.adaptor;
 
 import java.util.HashMap;
 import org.sieun.Order.domain.model.Ingredient;
-import org.sieun.Order.domain.model.order.Order;
 import org.sieun.Order.domain.modelRepository.IngredientRepository;
+import org.sieun.Order.service.port.IngredientPort;
 
-public class IngredientService {
+public class IngredientRepositoryAdaptor implements IngredientPort {
     private final IngredientRepository ingredientRepository;
 
-    public IngredientService(IngredientRepository ingredientRepository) {
+    public IngredientRepositoryAdaptor(IngredientRepository ingredientRepository) {
         this.ingredientRepository = ingredientRepository;
     }
+
+    @Override
     public void useIngredient(HashMap<Ingredient, Integer> ingredients) {
         checkEnoughIngredient(ingredients);
         ingredientRepository.minusIngredients(ingredients);
     }
 
+    @Override
     public void restockIngredient(HashMap<Ingredient, Integer> map) {
         ingredientRepository.plusIngredients(map);
     }
